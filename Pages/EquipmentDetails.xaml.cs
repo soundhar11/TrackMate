@@ -21,7 +21,7 @@ namespace TrackMate.Pages
             InitializeComponent();
             _databaseHelper = new DatabaseHelper("MaterialsTracker.db"); // Provide the correct path
             this.Loaded += OnPageLoaded;
-            LoadNamesIntoComboBox();
+            LoadData();
         }
         private void OnPageLoaded(object sender, RoutedEventArgs e)
         {
@@ -60,46 +60,7 @@ namespace TrackMate.Pages
             }
         }
         // Load all names into the ComboBox
-        private void LoadNamesIntoComboBox()
-        {
-            try
-            {
-                List<string> names = _databaseHelper.LoadNames();
-
-                // Add the "ALL" option at the beginning of the list
-                names.Insert(0, "ALL");
-
-                // Set the updated list as the ComboBox source
-                NamesComboBox.ItemsSource = names;
-                NamesComboBox.SelectedIndex = 0; // Set "ALL" as the default selected item
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading names: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        // Handle selection change in ComboBox
-        private void NamesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (NamesComboBox.SelectedItem is string selectedName)
-            {
-                if (selectedName == "ALL")
-                {
-                    // Load all data when "ALL" is selected
-                    LoadData();
-                }
-                else
-                {
-                    // Display details based on the selected name
-                    DisplayDetailsForSelectedName(selectedName);
-                }
-            }
-            else
-            {
-                DetailsDataGrid.ItemsSource = null; // Clear the DataGrid if no selection
-            }
-        }
+        
 
         // Retrieve and display details for the selected name
         private void DisplayDetailsForSelectedName(string name)
@@ -195,43 +156,92 @@ namespace TrackMate.Pages
             // Create a ContextMenu dynamically
             ContextMenu filterMenu = new ContextMenu();
 
-            // Add "Name" sort option
+            // Add "Name" filter option
             MenuItem nameFilter = new MenuItem() { Header = "Name" };
-            nameFilter.Click += (s, args) => SortDataGrid("Name");
+            nameFilter.Click += (s, args) => ShowNameFilter(); // Show Name Filter UI
 
-            // Add "Date" sort option
-            MenuItem dateFilter = new MenuItem() { Header = "Date" };
-            dateFilter.Click += (s, args) => SortDataGrid("Date");
-
-            // Add "Username" sort option
+            // Add "Username" filter option
             MenuItem usernameFilter = new MenuItem() { Header = "Username" };
-            usernameFilter.Click += (s, args) => SortDataGrid("Username");
+            usernameFilter.Click += (s, args) => ShowUsernameFilter(); // Show Username Filter UI
+
+            // Add "Date" filter option
+            MenuItem dateFilter = new MenuItem() { Header = "Date" };
+            dateFilter.Click += (s, args) => ShowDatePicker(); // Show Date Picker for filtering by Date
 
             // Add options to the ContextMenu
             filterMenu.Items.Add(nameFilter);
-            filterMenu.Items.Add(dateFilter);
             filterMenu.Items.Add(usernameFilter);
+            filterMenu.Items.Add(dateFilter);
 
             // Open the ContextMenu
             filterMenu.IsOpen = true;
         }
 
-        private void SortDataGrid(string columnName)
+
+        private void FetchButton_Click(object sender, RoutedEventArgs e)
         {
-            // Get the DataView from the DataGrid's ItemsSource
-            ICollectionView collectionView = CollectionViewSource.GetDefaultView(DetailsDataGrid.ItemsSource);
+            List<Product> products = new List<Product>();
 
-            if (collectionView != null)
+            // Handle DatePicker Filter
+            if (DatePicker.Visibility == Visibility.Visible && DatePicker.SelectedDate.HasValue)
             {
-                // Toggle sort direction if the same column is clicked
-                _sortDirection = _sortDirection == ListSortDirection.Ascending
-                    ? ListSortDirection.Descending
-                    : ListSortDirection.Ascending;
-
-                // Apply sorting
-                collectionView.SortDescriptions.Clear();
-                collectionView.SortDescriptions.Add(new SortDescription(columnName, _sortDirection));
+                DateTime selectedDate = DatePicker.SelectedDate.Value;
+                products = _databaseHelper.GetProductsByDate(selectedDate);
             }
+            // Handle Name/Username Filter
+            else if (FilterTextBox.Visibility == Visibility.Visible && !string.IsNullOrEmpty(FilterTextBox.Text))
+            {
+                string filterValue = FilterTextBox.Text;
+                string filterType = ((ComboBoxItem)FilterTypeComboBox.SelectedItem)?.Content.ToString();
+
+                if (filterType == "Starts With")
+                {
+                    products = _databaseHelper.GetProductsByNameOrUsername(filterValue, "Starts With");
+                }
+                else if (filterType == "Ends With")
+                {
+                    products = _databaseHelper.GetProductsByNameOrUsername(filterValue, "Ends With");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a filter option or enter filter criteria.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Display data in the DataGrid
+            if (products.Any())
+            {
+                DetailsDataGrid.ItemsSource = products;
+            }
+            else
+            {
+                MessageBox.Show("No products found based on the filter criteria.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+
+        private void ShowDatePicker()
+        {
+            DatePicker.Visibility = Visibility.Visible;
+            FetchButton.Visibility = Visibility.Visible;
+            FilterTypeComboBox.Visibility = Visibility.Collapsed;
+            FilterTextBox.Visibility = Visibility.Collapsed;
+        }
+        private void ShowNameFilter()
+        {
+            DatePicker.Visibility = Visibility.Collapsed;
+            FilterTypeComboBox.Visibility = Visibility.Visible;  // Show the dropdown for filter type
+            FilterTextBox.Visibility = Visibility.Visible;  // Show the TextBox to enter name
+            FetchButton.Visibility = Visibility.Visible;  // Show the Fetch button
+        }
+
+        private void ShowUsernameFilter()
+        {
+            DatePicker.Visibility = Visibility.Collapsed;
+            FilterTypeComboBox.Visibility = Visibility.Visible;  // Show the dropdown for filter type
+            FilterTextBox.Visibility = Visibility.Visible;  // Show the TextBox to enter username
+            FetchButton.Visibility = Visibility.Visible;  // Show the Fetch button
         }
         private void ShowTransactions_Click(object sender, RoutedEventArgs e)
         {
@@ -246,18 +256,77 @@ namespace TrackMate.Pages
             // Navigate to the Show Products Transaction page
             NavigationService.Navigate(new ProductHistoryPage(selectedProduct.Id));
         }
-
-
-
-
-
-
-
-
         private void AddProductsButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.Navigate(new PhotoVault());
         }
+       
+
+
+
+        //private void ShowNameFilter()
+        //{
+        //    DatePicker.Visibility = Visibility.Collapsed;
+        //    FilterComboBox.Visibility = Visibility.Visible;
+        //    FilterTextBox.Visibility = Visibility.Visible;
+        //    FilterComboBox.SelectedItem = null; // Reset any previous selection
+        //    FilterTextBox.Text = string.Empty;
+        //    FilterTextBox.Focus();
+        //}
+        //private void ShowUserNameFilter()
+        //{
+        //    DatePicker.Visibility = Visibility.Collapsed;
+        //    ClearDateFilter();
+        //    FilterComboBox.Visibility = Visibility.Visible;
+        //    FilterTextBox.Visibility = Visibility.Visible;
+        //    FilterComboBox.SelectedItem = null; // Reset any previous selection
+        //    FilterTextBox.Text = string.Empty;
+        //    FilterTextBox.Focus();
+        //}
+        //private void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    string filterText = FilterTextBox.Text.Trim().ToLower();
+        //    string filterOption = (FilterComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+        //    if (string.IsNullOrEmpty(filterText) || string.IsNullOrEmpty(filterOption))
+        //    {
+        //        // Clear the displayed results if no input or filter option is selected
+        //        ClearResults();
+        //        return;
+        //    }
+
+        //    // Fetch the data based on the filter and display
+        //    List<string> filteredNames = FilterNames(filterText, filterOption);
+        //    DisplayFilteredNames(filteredNames);
+        //}
+        //private void ClearDateFilter()
+        //{
+        //    // Resetting the DatePicker to null
+        //    DatePicker.SelectedDate = null;
+
+        //    // Optionally, clear any associated text field
+        //   // DateTextBox.Clear();  // Assuming you have a text box for displaying date
+        //}
+
+        //private List<string> FilterNames(string filterText, string filterOption)
+        //{
+        //    // Example list of names (you can replace it with your actual data retrieval logic)
+        //    List<string> allNames = _databaseHelper.LoadNames();
+        //    List<string> filteredNames = new List<string>();
+
+        //    if (filterOption == "Starts With")
+        //    {
+        //        filteredNames = allNames.Where(name => name.ToLower().StartsWith(filterText)).ToList();
+        //    }
+        //    else if (filterOption == "Ends With")
+        //    {
+        //        filteredNames = allNames.Where(name => name.ToLower().EndsWith(filterText)).ToList();
+        //    }
+
+        //    return filteredNames;
+        //}
+
+
 
     }
 }

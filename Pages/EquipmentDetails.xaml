@@ -20,21 +20,39 @@
         <!-- StackPanel for Filters and Actions -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10,50,10,0">
             <!-- Names ComboBox -->
-            <ComboBox Name="NamesComboBox"  
-                      Margin="0,0,10,0" 
-                      Width="200"
-                      Height="30" 
-                      ToolTip="Filter by Name"
-                      SelectionChanged="NamesComboBox_SelectionChanged" />
+         
 
             <!-- Filter Image -->
             <Image Source="/Resources/Images/Filter.png" 
                    Width="25" 
                    Height="25" 
                    VerticalAlignment="Center" 
-                   Margin="0,0,20,0" 
+                   Margin="0,0,0,0" 
                    Cursor="Hand" 
                    MouseLeftButtonUp="FilterImage_Click" />
+            <DatePicker Name="DatePicker"
+                HorizontalAlignment="Right"
+                Width="150"
+                Margin="10,10,30,0"
+                Visibility="Collapsed" />
+
+          
+
+
+            <ComboBox Name="FilterTypeComboBox" Width="150" Margin="0,0,10,0" 
+                      Visibility="Collapsed">
+                <ComboBoxItem Content="Starts With"/>
+                <ComboBoxItem Content="Ends With"/>
+            </ComboBox>
+
+            <TextBox Name="FilterTextBox" Width="150" Margin="0,0,10,0" 
+                     Visibility="Collapsed" ToolTip="Enter Name or Username"/>
+
+            <Button Name="FetchButton" 
+                  Content="Fetch" Width="75" HorizontalAlignment="Right" 
+                  Margin="0,0,10,0" Visibility="Collapsed" 
+                  Click="FetchButton_Click" />  
+
 
             <!-- Add Products Button -->
             <Button Content="+"  

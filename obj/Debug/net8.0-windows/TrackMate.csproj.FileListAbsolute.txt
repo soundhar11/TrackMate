@@ -53,10 +53,9 @@ C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\AddUs
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\ChangeOwnershipPage.g.cs
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\ChangeOwnershipPage.baml
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\ProductHistoryPage.g.cs
-C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\Transactions.g.cs
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\ProductHistoryPage.baml
-C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\Transactions.baml
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\TransactionPage.g.cs
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\TransactionPage.baml
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\UserEquipmentDetails.g.cs
 C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\Pages\UserEquipmentDetails.baml
+C:\Users\M\source\repos\TrackMate\TrackMate\obj\Debug\net8.0-windows\TrackMate.sourcelink.json

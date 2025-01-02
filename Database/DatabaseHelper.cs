@@ -432,6 +432,85 @@ namespace TrackMate.Database
                 return -1; // Error occurred
             }
         }
+        public List<Product> GetProductsByDate(DateTime date)
+        {
+            string query = "SELECT * FROM Details WHERE Date = @Date";
+            List<Product> products = new List<Product>();
+
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Date", date.ToString("yyyy-MM-dd"));
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            products.Add(new Product
+                            {
+                                Id = Convert.ToInt32(reader["Id"]),
+                                Name = reader["Name"].ToString(),
+                                Branch = reader["Branch"].ToString(),
+                                Username = reader["Username"].ToString(),
+                                Date = reader.GetString(4),
+                                Photo = reader["Photo"] as byte[]
+                            });
+                        }
+                    }
+                }
+            }
+            return products;
+        }
+
+        public List<Product> GetProductsByNameOrUsername(string filterValue, string filterType)
+        {
+            // Adjust query based on filter type
+            string query;
+            if (filterType == "Starts With")
+            {
+                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue OR Username LIKE @FilterValue";
+                filterValue += "%"; // Matches values starting with the filterValue
+            }
+            else if (filterType == "Ends With")
+            {
+                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue OR Username LIKE @FilterValue";
+                filterValue = "%" + filterValue; // Matches values ending with the filterValue
+            }
+            else
+            {
+                throw new ArgumentException("Invalid filter type.");
+            }
+
+            var products = new List<Product>();
+
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Open();
+                using (var command = new SQLiteCommand(query, connection))
+                {
+                    // Add the parameter with the adjusted filterValue
+                    command.Parameters.AddWithValue("@FilterValue", filterValue);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            products.Add(new Product
+                            {
+                                Name = reader["Name"].ToString(),
+                                Branch = reader["Branch"].ToString(),
+                                Username = reader["Username"].ToString(),
+                                Date = reader.GetString(4),
+                                Photo = reader["Photo"] as byte[]
+                            });
+                        }
+                    }
+                }
+            }
+
+            return products;
+        }
 
 
 

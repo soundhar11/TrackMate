@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 C:\Users\M\source\repos\TrackMate\TrackMate\App.xaml
-14579743537
+1389941534
 
-231746621627
+22-2063727211
 2032081515484
-Dashboards\AdminDashboard.xaml;Dashboards\UserDashboard.xaml;MainWindow.xaml;Pages\AddUserPage.xaml;Pages\ChangeOwnershipPage.xaml;Pages\EditPge.xaml;Pages\EquipmentDetails.xaml;Pages\PhotoVault.xaml;Pages\ProductHistoryPage.xaml;Pages\TransactionPage.xaml;Pages\Transactions.xaml;Pages\UserEquipmentDetails.xaml;Views\LoginPage.xaml;Views\SignUpPage.xaml;
+Dashboards\AdminDashboard.xaml;Dashboards\UserDashboard.xaml;MainWindow.xaml;Pages\AddUserPage.xaml;Pages\ChangeOwnershipPage.xaml;Pages\EditPge.xaml;Pages\EquipmentDetails.xaml;Pages\PhotoVault.xaml;Pages\ProductHistoryPage.xaml;Pages\TransactionPage.xaml;Pages\UserEquipmentDetails.xaml;Views\LoginPage.xaml;Views\SignUpPage.xaml;
 
 False
 

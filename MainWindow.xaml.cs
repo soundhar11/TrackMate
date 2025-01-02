@@ -23,7 +23,7 @@ namespace TrackMate
         {
             InitializeComponent();
            //MainFrame.Navigate(new UserDashboard("Jsr"));
-            MainFrame.Navigate(new LoginPage());
+            MainFrame.Navigate(new EquipmentDetails());
         }
     }
 }
