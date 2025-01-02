@@ -1,0 +1,55 @@
+﻿<Page x:Class="TrackMate.Views.SignUpPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TrackMate.Views"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SignUpPage">
+
+    <Grid Background="#ebe4e4">
+        <!-- Background Gradient -->
+
+
+        <!-- Content Container -->
+        <Border Background="White" Width="350" Height="600" CornerRadius="30" Padding="20"
+            HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="5" Color="#444" />
+            </Border.Effect>
+            <StackPanel>
+                <TextBlock Text="Create an Account" HorizontalAlignment="Center" FontSize="24" 
+                        Foreground="#403737" FontWeight="Bold"/>
+
+                <TextBlock Text="User Role" Margin="0,20,0,5"  Foreground="#667ded" FontWeight="Bold"/>
+                <ComboBox x:Name="UserRoleComboBox" Margin="0,5,0,5" Height="30" 
+      BorderBrush="#CCC" BorderThickness="1" Padding="5">
+                    <ComboBoxItem Content="Admin" />
+                    <ComboBoxItem Content="User" />
+                </ComboBox>
+
+                <TextBlock Text="Name" Margin="0,20,0,5"  Foreground="#667ded" FontWeight="Bold"/>
+                <TextBox x:Name="Name" Margin="0,5,0,5" BorderBrush="#CCC" BorderThickness="1" 
+                     Height="30" Padding="5" />
+
+                <TextBlock Text="Mobile Number" Margin="0,20,0,5" Foreground="#667ded" FontWeight="Bold"/>
+                <TextBox x:Name="Mobile_Number" Margin="0,5,0,5" BorderBrush="#CCC" BorderThickness="1" 
+                     Height="30" Padding="5" />
+
+                <TextBlock Text="Email" Margin="0,20,0,5"  Foreground="#667ded" FontWeight="Bold"/>
+                <TextBox x:Name="Email" Margin="0,5,0,5" BorderBrush="#CCC" BorderThickness="1" 
+                     Height="30" Padding="5" />
+
+                <TextBlock Text="Password" Margin="0,20,0,5"  Foreground="#667ded" FontWeight="Bold"/>
+                <PasswordBox x:Name="Password" Margin="0,5,0,5" BorderBrush="#CCC" BorderThickness="1" 
+                         Height="30" Padding="5" />
+                <Button Content="Sign Up" Height="40" Width="150" Foreground="White" FontWeight="Bold" 
+                    BorderThickness="0" Margin="0,20,0,0" HorizontalAlignment="Center"
+                    Click="SignUpButton_Click" Background="#667ded">
+
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>

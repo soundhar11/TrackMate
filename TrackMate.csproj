@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Images\back.png" />
+    <None Remove="Resources\Images\edit.png" />
+    <None Remove="Resources\Images\Filter.png" />
+    <None Remove="Resources\Images\gallery.png" />
+    <None Remove="Resources\Images\History.png" />
+    <None Remove="Resources\Images\transaction.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Styles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\back.png" />
+    <Resource Include="Resources\Images\edit.png" />
+    <Resource Include="Resources\Images\Filter.png" />
+    <Resource Include="Resources\Images\gallery.png" />
+    <Resource Include="Resources\Images\History.png" />
+    <Resource Include="Resources\Images\transaction.png" />
+  </ItemGroup>
+
+</Project>
