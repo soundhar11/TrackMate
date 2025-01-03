@@ -51,7 +51,8 @@ namespace TrackMate.Database
 
                     // Fetch old values from the Details table
                     string selectQuery = "SELECT Name, Branch FROM Details WHERE Id = @Id";
-                    string oldName = string.Empty, oldBranch = string.Empty;
+                    string oldName = string.Empty;
+                    string oldBranch = string.Empty;
 
                     using (var selectCommand = new SQLiteCommand(selectQuery, connection))
                     {
@@ -60,24 +61,38 @@ namespace TrackMate.Database
                         {
                             if (reader.Read())
                             {
-                                oldName = reader["Name"].ToString();
-                                oldBranch = reader["Branch"] == DBNull.Value ? string.Empty : reader["Branch"].ToString();
+                                oldName = reader["Name"]?.ToString() ?? string.Empty;
+                                oldBranch = reader["Branch"]?.ToString() ?? string.Empty;
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Record with ID {id} not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                return; // Exit if no matching record
                             }
                         }
                     }
 
-                    // Normalize null or empty values for newBranch
+                    // Normalize null or empty values for comparison
                     newBranch = string.IsNullOrWhiteSpace(newBranch) ? null : newBranch;
+                    string? normalizedOldBranch = string.IsNullOrWhiteSpace(oldBranch) ? null : oldBranch;
 
                     // Determine if Name or Branch has changed
-                    bool nameChanged = oldName != newName;
-                    bool branchChanged = oldBranch != newBranch;
+                    bool nameChanged = !string.Equals(oldName, newName, StringComparison.Ordinal);
+                    bool branchChanged = !string.Equals(normalizedOldBranch, newBranch, StringComparison.Ordinal);
 
-                    // Log history if either Name or Branch has changed
+                    // Log history only if a meaningful change occurred
                     if (nameChanged || branchChanged)
                     {
-                        LogHistory(connection, id, oldName, nameChanged ? newName : null, oldBranch, branchChanged ? newBranch : null);
+                        LogHistory(
+                            connection,
+                            id,
+                            oldName,
+                            nameChanged ? newName : null,
+                            oldBranch,
+                            branchChanged ? newBranch : null
+                        );
                     }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -91,12 +106,8 @@ namespace TrackMate.Database
         private void LogHistory(SQLiteConnection connection, int originalId, string oldName, string? newName, string oldBranch, string? newBranch)
         {
             string query = @"
-                INSERT INTO DetailsHistory (OriginalId, OldName, NewName, OldBranch, NewBranch, Date)
-                VALUES (@OriginalId, @OldName, @NewName, @OldBranch, @NewBranch, CURRENT_TIMESTAMP)";
-
-            // Log the query and parameters
-            Console.WriteLine($"Executing SQL: {query}");
-            Console.WriteLine($"With parameters: OriginalId={originalId}, OldName={oldName}, NewName={newName}, OldBranch={oldBranch}, NewBranch={newBranch}");
+        INSERT INTO DetailsHistory (OriginalId, OldName, NewName, OldBranch, NewBranch, Date)
+        VALUES (@OriginalId, @OldName, @NewName, @OldBranch, @NewBranch, CURRENT_TIMESTAMP)";
 
             using (var command = new SQLiteCommand(query, connection))
             {
@@ -109,12 +120,11 @@ namespace TrackMate.Database
                 try
                 {
                     command.ExecuteNonQuery();
-                    Console.WriteLine("History inserted successfully.");
+                    Console.WriteLine("History logged successfully.");
                 }
                 catch (Exception ex)
                 {
-                    // Log the error
-                    MessageBox.Show($"Error inserting history: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error logging history: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
