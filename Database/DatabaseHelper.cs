@@ -463,25 +463,30 @@ namespace TrackMate.Database
             return products;
         }
 
-        public List<Product> GetProductsByNameOrUsername(string filterValue, string filterType)
+        public List<Product> GetProductsByName(string filterValue, string filterType)
         {
-            // Adjust query based on filter type
             string query;
+
             if (filterType == "Starts With")
             {
-                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue OR Username LIKE @FilterValue";
-                filterValue += "%"; // Matches values starting with the filterValue
+                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue";
+                filterValue += "%"; // Matches values starting with filterValue
             }
             else if (filterType == "Ends With")
             {
-                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue OR Username LIKE @FilterValue";
-                filterValue = "%" + filterValue; // Matches values ending with the filterValue
+                query = "SELECT * FROM Details WHERE Name LIKE @FilterValue";
+                filterValue = "%" + filterValue; // Matches values ending with filterValue
             }
             else
             {
                 throw new ArgumentException("Invalid filter type.");
             }
 
+            return GetProductsByQuery(query, filterValue);
+        }
+
+        private List<Product> GetProductsByQuery(string query, string filterValue)
+        {
             var products = new List<Product>();
 
             using (var connection = new SQLiteConnection(ConnectionString))
@@ -489,7 +494,6 @@ namespace TrackMate.Database
                 connection.Open();
                 using (var command = new SQLiteCommand(query, connection))
                 {
-                    // Add the parameter with the adjusted filterValue
                     command.Parameters.AddWithValue("@FilterValue", filterValue);
 
                     using (var reader = command.ExecuteReader())
@@ -512,8 +516,27 @@ namespace TrackMate.Database
             return products;
         }
 
+        public List<Product> GetProductsByUsername(string filterValue, string filterType)
+        {
+            string query;
 
+            if (filterType == "Starts With")
+            {
+                query = "SELECT * FROM Details WHERE Username LIKE @FilterValue";
+                filterValue += "%"; // Matches values starting with filterValue
+            }
+            else if (filterType == "Ends With")
+            {
+                query = "SELECT * FROM Details WHERE Username LIKE @FilterValue";
+                filterValue = "%" + filterValue; // Matches values ending with filterValue
+            }
+            else
+            {
+                throw new ArgumentException("Invalid filter type.");
+            }
 
+            return GetProductsByQuery(query, filterValue);
+        }
 
 
     }

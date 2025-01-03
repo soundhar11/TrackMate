@@ -15,6 +15,7 @@ namespace TrackMate.Pages
     public partial class EquipmentDetails : Page
     {
         private DatabaseHelper _databaseHelper;
+        private string CurrentFilter = string.Empty; // Tracks the active filter (Name/Username)
 
         public EquipmentDetails()
         {
@@ -188,19 +189,19 @@ namespace TrackMate.Pages
                 DateTime selectedDate = DatePicker.SelectedDate.Value;
                 products = _databaseHelper.GetProductsByDate(selectedDate);
             }
-            // Handle Name/Username Filter
+            // Handle Name and Username Filters
             else if (FilterTextBox.Visibility == Visibility.Visible && !string.IsNullOrEmpty(FilterTextBox.Text))
             {
                 string filterValue = FilterTextBox.Text;
                 string filterType = ((ComboBoxItem)FilterTypeComboBox.SelectedItem)?.Content.ToString();
 
-                if (filterType == "Starts With")
+                if (CurrentFilter == "Name")
                 {
-                    products = _databaseHelper.GetProductsByNameOrUsername(filterValue, "Starts With");
+                    products = _databaseHelper.GetProductsByName(filterValue, filterType);
                 }
-                else if (filterType == "Ends With")
+                else if (CurrentFilter == "Username")
                 {
-                    products = _databaseHelper.GetProductsByNameOrUsername(filterValue, "Ends With");
+                    products = _databaseHelper.GetProductsByUsername(filterValue, filterType);
                 }
             }
             else
@@ -217,8 +218,10 @@ namespace TrackMate.Pages
             else
             {
                 MessageBox.Show("No products found based on the filter criteria.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                DetailsDataGrid.ItemsSource = null;
             }
         }
+
 
 
         private void ShowDatePicker()
@@ -231,18 +234,25 @@ namespace TrackMate.Pages
         private void ShowNameFilter()
         {
             DatePicker.Visibility = Visibility.Collapsed;
-            FilterTypeComboBox.Visibility = Visibility.Visible;  // Show the dropdown for filter type
-            FilterTextBox.Visibility = Visibility.Visible;  // Show the TextBox to enter name
-            FetchButton.Visibility = Visibility.Visible;  // Show the Fetch button
+            FetchButton.Visibility = Visibility.Visible;
+            FilterTextBox.Visibility = Visibility.Visible;
+            FilterTypeComboBox.Visibility = Visibility.Visible; // Allow Starts With/Ends With
+            FilterTypeComboBox.SelectedIndex = 0; // Default to "Starts With"
+            FilterTextBox.Text = string.Empty; // Clear previous filter value
+            CurrentFilter = "Name"; // Set current filter to Name
         }
 
         private void ShowUsernameFilter()
         {
             DatePicker.Visibility = Visibility.Collapsed;
-            FilterTypeComboBox.Visibility = Visibility.Visible;  // Show the dropdown for filter type
-            FilterTextBox.Visibility = Visibility.Visible;  // Show the TextBox to enter username
-            FetchButton.Visibility = Visibility.Visible;  // Show the Fetch button
+            FetchButton.Visibility = Visibility.Visible;
+            FilterTextBox.Visibility = Visibility.Visible;
+            FilterTypeComboBox.Visibility = Visibility.Visible; // Allow Starts With/Ends With
+            FilterTypeComboBox.SelectedIndex = 0; // Default to "Starts With"
+            FilterTextBox.Text = string.Empty; // Clear previous filter value
+            CurrentFilter = "Username"; // Set current filter to Username
         }
+
         private void ShowTransactions_Click(object sender, RoutedEventArgs e)
         {
             var selectedProduct = DetailsDataGrid.SelectedItem as Product;

@@ -92,7 +92,7 @@ namespace TrackMate.Pages {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/TrackMate;component/pages/equipmentdetails.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/TrackMate;V1.0.0.0;component/pages/equipmentdetails.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Pages\EquipmentDetails.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
